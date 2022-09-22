@@ -1,0 +1,46 @@
+{
+  "project_info": {
+    "project_number": "720502254337",
+    "project_id": "ballotbox-93d61",
+    "storage_bucket": "ballotbox-93d61.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:720502254337:android:0c5f4e37907a7e90e2c900",
+        "android_client_info": {
+          "package_name": "host.exp.exponent"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "720502254337-ikicecknmbrgruvbq1gtklubppous1t1.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDZMByKLh7OA71eHZGVojK__Ho8r9KYn54"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "720502254337-ikicecknmbrgruvbq1gtklubppous1t1.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "720502254337-49g9e7gl5qehmntmmgd8snhnkjir3ls7.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "host.exp.exponent"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

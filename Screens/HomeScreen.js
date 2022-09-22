@@ -5,7 +5,7 @@ import { CurrentRenderContext } from '@react-navigation/native'
 const HomeScreen = () => {
   return (
     <View style={styles.view}>
-      <Text>HomeScreen</Text>
+      <Text>This is the homescreen.</Text>
     </View>
   )
 }
@@ -15,7 +15,7 @@ export default HomeScreen
 const styles = StyleSheet.create({
     view: {
         justifyContent: 'center',
-        alignContent: 'center',
+        alignItems: 'center',
         flex: 1
     }
 })
