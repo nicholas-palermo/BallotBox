@@ -1,10 +1,24 @@
 import { Image, KeyboardAvoidingView, SafeAreaView, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native'
-import React from 'react'
+import React, { useState } from 'react'
 import { useNavigation } from '@react-navigation/native';
+import useAuth from '../hooks/useAuth';
+
 
 const LoginScreen = () => {
 
-const navigation = useNavigation();
+    const navigation = useNavigation();
+
+    const { loginUser } = useAuth();
+
+    const [email, setEmail] = useState('');
+    const [password, setPassword] = useState('');
+
+    const signInUser = () => {
+        loginUser(email, password);
+        navigation.navigate("Home");
+    }
+
+
 
     return (
 
@@ -16,19 +30,19 @@ const navigation = useNavigation();
 
       <View style={styles.InputContainer}>
         <TextInput
-          placeholder='Username or email'
+          placeholder='Email'
           style={styles.Input}
-          // value={ }
-          // onChange={text => }
+          value={email}
+          onChangeText={email => setEmail(email)}
 
 
         ></TextInput>
         <TextInput
           placeholder='Password'
           style={styles.Input}
-          // value={ }
-          // onChange={text => }
-          secureTextEntry
+          value={password}
+          onChangeText={password => setPassword(password)}
+          secureTextEntry = {true}
 
         ></TextInput>
       </View>
@@ -36,7 +50,7 @@ const navigation = useNavigation();
       <View style={styles.ButtonContainer}>
 
         <TouchableOpacity
-          onPress={() => navigation.navigate("Home")}
+          onPress={() => signInUser()}
           style={styles.Button}
         >
           <Text style={styles.ButtonText}>Login</Text>

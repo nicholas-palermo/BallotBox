@@ -1,14 +1,43 @@
 import { KeyboardAvoidingView, Image, TouchableOpacity, Button, StyleSheet, Text, TextInput, View } from 'react-native'
-import React from 'react'
-import { useNavigation } from '@react-navigation/native'
+import React, { useState } from 'react';
+import { useNavigation } from '@react-navigation/native';
+import useAuth from '../hooks/useAuth';
+import { useHeaderHeight } from '@react-navigation/elements';
+
 
 const SignUpScreen = () => {
 
     const navigation = useNavigation();
 
+    const { signUpUser } = useAuth();
+
+    const [firstName, setFirstName] = useState();
+    const [lastName, setLastName] = useState();
+    const [email, setEmail] = useState();
+    const [password, setPassword] = useState();
+    const [confirmPassword, setConfirmPassword] = useState();
+
+    const registerUser = () => {
+      if (password === confirmPassword) {
+        console.log(firstName);        
+        console.log(lastName);
+        console.log(email);
+        console.log(password);
+        console.log(confirmPassword);
+        signUpUser(email, password);
+        navigation.navigate("Home");
+      } else {
+        //do something to let the user know that the passwords don't match...
+      }
+      
+    }
+
+    const headerHeight = useHeaderHeight();
+
     return (
 
-      <KeyboardAvoidingView style={styles.Container}>
+      <KeyboardAvoidingView style={styles.Container} keyboardVerticalOffset={headerHeight}
+      behavior={Platform.OS === "ios" ? "padding" : "height"}>
         <View style={styles.LogoContainer}>
           <Image style={styles.Logo} source={require('/Users/nicholas.palermo/Desktop/CSC450/BallotBox/assets/Logo.png')}></Image>
         </View>
@@ -16,40 +45,32 @@ const SignUpScreen = () => {
           <TextInput
             placeholder='First Name'
             style={styles.Input}
-            // value={ }
-            // onChange={text => }
+            value={firstName}
+            onChangeText={(firstName) => setFirstName(firstName)}
   
   
           ></TextInput>
           <TextInput
             placeholder='Last Name'
             style={styles.Input}
-            // value={ }
-            // onChange={text => }
+            value={lastName}
+            onChangeText={(lastName) => setLastName(lastName)}
   
           ></TextInput>
 
           <TextInput
             placeholder='Email'
             style={styles.Input}
-            // value={ }
-            // onChange={text => }
-  
-          ></TextInput>
-
-          <TextInput
-            placeholder='Username'
-            style={styles.Input}
-            // value={ }
-            // onChange={text => }
+            value={email}
+            onChangeText={(email) => {setEmail(email)}}
   
           ></TextInput>
 
           <TextInput
             placeholder='Password'
             style={styles.Input}
-            // value={ }
-            // onChange={text => }
+            value={password}
+            onChangeText={(password) => {setPassword(password)}}
             secureTextEntry
 
           ></TextInput>
@@ -57,8 +78,9 @@ const SignUpScreen = () => {
           <TextInput
             placeholder='Confirm Password'
             style={styles.Input}
-            // value={ }
-            // onChange={text => }
+            value={confirmPassword}
+            onChangeText={confirmPassword => setConfirmPassword(confirmPassword)}
+            secureTextEntry
   
           ></TextInput>
         </View>
@@ -66,7 +88,7 @@ const SignUpScreen = () => {
         <View style={styles.ButtonContainer}>
   
           <TouchableOpacity
-            onPress={() => navigation.navigate("Home")}
+            onPress={() => registerUser()}
             style={styles.Button}
           >
             <Text style={styles.ButtonText}>Sign Up!</Text>
