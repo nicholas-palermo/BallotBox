@@ -1,5 +1,5 @@
 import { Image, KeyboardAvoidingView, SafeAreaView, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native'
-import React, { useState } from 'react'
+import React, { useState, useLayoutEffect } from 'react'
 import { useNavigation } from '@react-navigation/native';
 import useAuth from '../hooks/useAuth';
 
@@ -15,10 +15,13 @@ const LoginScreen = () => {
 
     const signInUser = () => {
         loginUser(email, password);
-        navigation.navigate("Home");
     }
 
-
+    useLayoutEffect(() => {
+      navigation.setOptions({
+        headerShown: false
+      })
+    }, [])
 
     return (
 
@@ -73,7 +76,7 @@ const LoginScreen = () => {
         <View style={styles.SignUpPrompt}>
           <Text>Don't have an account yet?</Text>
           <TouchableOpacity 
-            onPress={() => navigation.navigate("SignUp")}
+            onPress={() => navigation.navigate("SignUpOne")}
             style={styles.SignUpButton}
             ><Text style={{textDecorationLine: 'underline', color: 'blue'}}>Sign Up</Text>
           </TouchableOpacity>

@@ -4,8 +4,11 @@ import { NavigationContainer } from '@react-navigation/native';
 import HomeScreen from './Screens/HomeScreen';
 import { ScreenStackHeaderLeftView } from 'react-native-screens';
 import LoginScreen from './Screens/LoginScreen';
-import SignUpScreen from './Screens/SignUpScreen';
+import SignUpOneScreen from './Screens/SignUpOneScreen';
+import SignUpTwoScreen from './Screens/SignUpTwoScreen';
+import SignUpThreeScreen from './Screens/SignUpThreeScreen';
 import useAuth from './hooks/useAuth';
+import SettingsScreen from './Screens/SettingsScreen';
 
 const Stack = createNativeStackNavigator();
 
@@ -18,11 +21,14 @@ const StackNavigator = () => {
             {user ? (
                 <>
                     <Stack.Screen name="Home" component={HomeScreen} />
+                    <Stack.Screen name="Settings" component={SettingsScreen} />
                 </>
             ) : (
                 <>
-                    <Stack.Screen name="Login" options={{ headerShown: false }} component={LoginScreen} />
-                    <Stack.Screen name="SignUp" options={{ headerShown: false }} component={SignUpScreen} />
+                    <Stack.Screen name="Login" component={LoginScreen} />
+                    <Stack.Screen name='SignUpOne' component={SignUpOneScreen} />
+                    <Stack.Screen name='SignUpTwo' component={SignUpTwoScreen} />
+                    <Stack.Screen name='SignUpThree' component={SignUpThreeScreen} />
                 </>
             )}
         </Stack.Navigator>
