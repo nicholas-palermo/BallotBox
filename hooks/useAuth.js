@@ -21,7 +21,6 @@ export const AuthProvider = ({ children }) => {
       onAuthStateChanged(auth, (user) => {
         if (user) {
           //Logged in...
-          const userData = fetchUserData(user.uid);
           setUser(user);
   
         } else {
@@ -34,25 +33,6 @@ export const AuthProvider = ({ children }) => {
     }, 
     []
   );
-
-  const fetchUserData = async(uid) => {
-    try {
-      const userRef = doc(db, "users", uid);
-      
-      await getDoc(userRef)
-        .then((snapshot) => {
-          //MARK: Success
-          if(snapshot.exists){
-            setUserInfo(snapshot.data())
-          } else {
-            alert("NO USER FOUND")
-          }
-        })
-
-    } catch (error) {
-      console.log("error", error);
-    }
-  };
   
 
   const signUpUser = (
@@ -129,6 +109,7 @@ export const AuthProvider = ({ children }) => {
     error,
     signUpUser,
     loginUser,
+    setUserInfo,
     logout
   }), [user, loading, error])
 
