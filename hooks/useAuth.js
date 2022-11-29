@@ -2,13 +2,15 @@ import { View, Text } from 'react-native'
 import React, { createContext, useContext, useEffect, useState, useMemo } from 'react'
 
 //Firebase Authentication
-import { auth, db } from '../firebase/firebase-config';
-import { createUserWithEmailAndPassword, signInWithEmailAndPassword, onAuthStateChanged, signOut } from "firebase/auth";
+import { db } from '../firebase/firebase-config';
+import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, onAuthStateChanged, signOut } from "firebase/auth";
 import { doc, getDoc, setDoc } from 'firebase/firestore';
 
 const AuthContext = createContext({});
 
 export const AuthProvider = ({ children }) => {
+
+  const auth = getAuth();
 
   const [user, setUser] = useState(null);
   const [userInfo, setUserInfo] = useState(null);
@@ -68,13 +70,24 @@ export const AuthProvider = ({ children }) => {
               state: state,
               politicalAffiliation: politicalAffiliation,
               dateOfBirth: dateOfBirth,
-              gender: gender
+              gender: gender,
+              profileImage: 'https://firebasestorage.googleapis.com/v0/b/ballotbox-93d61.appspot.com/o/profilePics%2FemptyProfilePicture.png?alt=media&token=5be01d75-66b1-4e66-b793-d4232b654cab'
           });
           })
           .catch((error) => {
             const errorCode = error.code;
             const errorMessage = error.message;
             setError(errorCode + ' ' + errorMessage);
+          })
+          .then(async () => {
+            const docRef = doc(db, "users", user.uid);
+            const docSnap = await getDoc(docRef)
+
+            if (docSnap.exists()) {
+              setUserInfo(docSnap.data());
+            } else {
+              console.log("Error: Unable to retrieve user data!")
+            }
           })
           .finally(() => setLoading(false));
   }
@@ -90,6 +103,16 @@ export const AuthProvider = ({ children }) => {
             const errorCode = error.code;
             const errorMessage = error.message;
             setError(errorCode + ' ' + errorMessage);
+          })
+          .then(async () => {
+            const docRef = doc(db, "users", user.uid);
+            const docSnap = await getDoc(docRef)
+
+            if (docSnap.exists()) {
+              setUserInfo(docSnap.data());
+            } else {
+              console.log("Error: Unable to retrieve user data!")
+            }
           })
           .finally(() => setLoading(false));
   }
@@ -111,7 +134,7 @@ export const AuthProvider = ({ children }) => {
     loginUser,
     setUserInfo,
     logout
-  }), [user, loading, error])
+  }), [user, loading, error, userInfo])
 
   return (
     <AuthContext.Provider value={memoedValue}>
