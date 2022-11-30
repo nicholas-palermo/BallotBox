@@ -13,10 +13,12 @@ import CandidateProfileScreen from './Screens/CandidateProfileScreen';
 import ElectionInfoScreen from './Screens/ElectionInfoScreen';
 import CivicAssistantScreen from './Screens/CivicAssistantScreen';
 import MyBallotScreen from './Screens/MyBallotScreen';
+import SearchScreen from './Screens/SearchScreen';
 
 //TabBar Icon Imports
 import { Ionicons } from '@expo/vector-icons';
 import { MaterialIcons } from '@expo/vector-icons';
+import { MaterialCommunityIcons } from '@expo/vector-icons';
 
 //Home Tab
 const Home = createStackNavigator();
@@ -38,7 +40,9 @@ const MyBallot = createStackNavigator();
 const MyBallotStackNavigator = () => {
     return (
         <MyBallot.Navigator>
-            <MyBallot.Screen name="MyBallot" component={MyBallotScreen} options={{headerShown: false}}></MyBallot.Screen>
+            <MyBallot.Screen name="MyBallot" component={MyBallotScreen} options={{ headerShown: false }}></MyBallot.Screen>
+            <MyBallot.Screen name="CandidateProfile" component={CandidateProfileScreen} />
+            <MyBallot.Screen name="ElectionInfo" component={ElectionInfoScreen} />
         </MyBallot.Navigator>
     )
 }
@@ -53,28 +57,51 @@ const TabNaviagtor = () => {
                 height: 70,
                 backgroundColor: 'rgb(240,240,240)',
                 borderTopWidth: 1,
-                paddingBottom: 20
+                paddingBottom: 20,
             },
-            tabBarShowLabel: false
+            tabBarShowLabel: false,
+            tabBarActiveTintColor: 'black',
+            tabBarInactiveTintColor: 'grey'
         }}>
             <Tab.Screen name="Home" component={HomeStackNavigator} options={{
                 headerShown: false,
-                tabBarIcon: () => {
-                    return(
-                        <Ionicons name="home" size={24} color="black" />
+                tabBarIcon: ({color}) => {
+                    return (
+                        <Ionicons name="home" size={28} color={color}/>
                     )
                 }
-                
-                }}/>
+
+            }} />
             <Tab.Screen name="Ballot" component={MyBallotStackNavigator} options={{
                 headerShown: false,
-                tabBarIcon: () => {
-                    return(
-                        <MaterialIcons name="ballot" size={24} color="black" />
+                tabBarIcon: ({color}) => {
+                    return (
+                        <MaterialIcons name="ballot" size={28} color={color}/>
                     )
                 }
-                
-                }}/>
+
+
+            }} />
+            <Tab.Screen name="CivicAssistant" component={CivicAssistantScreen} options={{
+                headerShown: false,
+                tabBarIcon: ({color}) => {
+                    return (
+                        <MaterialCommunityIcons name="account-question" size={28} color={color} />
+                    )
+                }
+
+
+            }} />
+            <Tab.Screen name="Search" component={SearchScreen} options={{
+                headerShown: false,
+                tabBarIcon: ({color}) => {
+                    return (
+                        <MaterialIcons name="search" size={28} color={color} />
+                    )
+                }
+
+
+            }} />
         </Tab.Navigator>
     )
 }
@@ -89,7 +116,7 @@ const StackNavigator = () => {
         <Stack.Navigator>
             {user ? (
                 <>
-                    <Stack.Screen name="Tab" component={TabNaviagtor} options={{headerShown: false}}/>
+                    <Stack.Screen name="Tab" component={TabNaviagtor} options={{ headerShown: false }} />
                 </>
             ) : (
                 <>

@@ -25,6 +25,7 @@ const ElectionInfoScreen = () => {
         type: route.params.type,
         votingPeriod: route.params.votingPeriod
     })
+    const [expanded, SetExpanded] = useState(false);
 
     useLayoutEffect(() => {
         navigation.setOptions({
@@ -43,13 +44,13 @@ const ElectionInfoScreen = () => {
                 <View style={styles.view}>
                     <View style={styles.coverPhotoContainer}>
                         <View style={styles.coverPhoto1Container}>
-                            <Image style={styles.coverPhoto1} source={{ uri: election.candidates.democrat.candidatePhoto }}></Image>
+                            <Image style={expanded ? styles.coverPhoto1Expanded : styles.coverPhoto1Collapsed} source={{ uri: election.candidates.democrat.candidatePhoto }}></Image>
                         </View>
                         <View style={styles.coverPhoto2Container}>
-                            <Image style={styles.coverPhoto2} source={{ uri: election.candidates.republican.candidatePhoto }}></Image>
+                            <Image style={expanded ? styles.coverPhoto2Expanded : styles.coverPhoto2Collapsed} source={{ uri: election.candidates.republican.candidatePhoto }}></Image>
                         </View>
                     </View>
-                    <TouchableOpacity style={styles.backButton} onPress={() => navigation.navigate("Dashboard")}>
+                    <TouchableOpacity style={styles.backButton} onPress={() => navigation.goBack()}>
                         <Ionicons name="arrow-back" size={32} color="lightgrey" />
                     </TouchableOpacity>
                 </View>
@@ -58,6 +59,8 @@ const ElectionInfoScreen = () => {
                     startUp={false}
                     downDisplay={300}
                     roundedEdges={true}
+                    onExpanded={() => SetExpanded(true)}
+                    onCollapsed={() => SetExpanded(false)}
                 // onExpanded={some function to dim background}
                 >
                     <ScrollView contentContainerStyle={{ alignItems: 'center' }} style={styles.electionContainer}>
@@ -118,19 +121,20 @@ const ElectionInfoScreen = () => {
                                 <Text style={styles.electionInfoLine}><Text style={styles.electionInfoLabel}>Date: </Text>{election.date}</Text>
                                 <Text style={styles.electionInfoLine}><Text style={styles.electionInfoLabel}>Polling Opens: </Text>{election.votingPeriod.start.toDate().toLocaleString()}</Text>
                                 <Text style={styles.electionInfoLine}><Text style={styles.electionInfoLabel}>Polling Closes: </Text>{election.votingPeriod.end.toDate().toLocaleString()}</Text>
-                                <Text style={[styles.electionInfoLine, {marginTop: 5}]}><Text style={styles.electionInfoLabel}>Your Polling Location:</Text></Text>
+                                <Text style={[styles.electionInfoLine, { marginTop: 5 }]}><Text style={styles.electionInfoLabel}>Your Polling Location:</Text></Text>
                                 <PollingPlaceButton userInfo={userInfo}></PollingPlaceButton>
                             </View>
+                            <View style={{alignItems: 'center'}}>
+                                <TouchableHighlight style={styles.toAssistantButton} onPress={() => navigation.navigate("CivicAssistant")}>
+                                    <Text style={styles.toAssistantButtonText}>
+                                        Help Me Decide
+                                    </Text>
+                                </TouchableHighlight>
+                            </View>
+                            
                         </TouchableOpacity>
                     </ScrollView>
                 </BottomDrawer>
-                <View style={{justifyContent: 'center', alignItems: 'center', width: '100%'}}>
-                    <TouchableHighlight style={styles.toAssistantButton} onPress={() => navigation.navigate("CivicAssistant")}>
-                        <Text style={styles.toAssistantButtonText}>
-                            Help Me Decide
-                        </Text>
-                    </TouchableHighlight>
-                </View>
             </View>
         </>
     )
@@ -175,22 +179,34 @@ const styles = StyleSheet.create({
         height: '100%',
         // marginRight: 3
         borderColor: 'black',
-        borderRightWidth: 3
+        borderRightWidth: 3,
+        backgroundColor: 'black'
     },
     coverPhoto2Container: {
         width: '50%',
         height: '100%',
         // marginLeft: 3
         borderColor: 'black',
-        borderLeftWidth: 3
+        borderLeftWidth: 3,
+        backgroundColor: 'black'
     },
-    coverPhoto1: {
+    coverPhoto1Collapsed: {
         width: '100%',
         height: '100%'
     },
-    coverPhoto2: {
+    coverPhoto2Collapsed: {
         width: '100%',
         height: '100%'
+    },
+    coverPhoto1Expanded: {
+        width: '100%',
+        height: '100%',
+        opacity: 0.3
+    },
+    coverPhoto2Expanded: {
+        width: '100%',
+        height: '100%',
+        opacity: 0.3
     },
     backButton: {
         zIndex: 1,
@@ -306,10 +322,7 @@ const styles = StyleSheet.create({
         fontSize: 18
     },
     toAssistantButton: {
-        position: 'absolute',
-        bottom: 40,
         backgroundColor: 'rgb(220,220,250)',
-        zIndex: 2,
         paddingTop: 20,
         paddingBottom: 20,
         paddingLeft: 50,
@@ -321,7 +334,9 @@ const styles = StyleSheet.create({
             width: 4
         },
         shadowRadius: 2,
-        shadowOpacity: 0.5
+        shadowOpacity: 0.5,
+        width: '50%',
+        marginTop: 45
     },
     toAssistantButtonText: {
         color: 'rgb(80,80,200)',

@@ -3,6 +3,7 @@ import React from "react";
 import StackNavigator from "./StackNavigator";
 import { LogBox } from 'react-native';
 import { AuthProvider } from "./hooks/useAuth";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 
 

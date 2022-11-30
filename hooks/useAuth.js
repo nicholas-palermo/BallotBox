@@ -17,6 +17,7 @@ export const AuthProvider = ({ children }) => {
   const [loadingInitial, setLoadingInitial] = useState(true);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
+  const [upcomingElections, setUpcomingElections] = useState([])
 
   useEffect(
     () => {
@@ -130,11 +131,13 @@ export const AuthProvider = ({ children }) => {
     userInfo: userInfo,
     loading,
     error,
+    upcomingElections,
     signUpUser,
     loginUser,
     setUserInfo,
-    logout
-  }), [user, loading, error, userInfo])
+    logout,
+    setUpcomingElections
+  }), [user, loading, error, userInfo, upcomingElections])
 
   return (
     <AuthContext.Provider value={memoedValue}>

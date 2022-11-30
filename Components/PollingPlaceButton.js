@@ -1,13 +1,13 @@
 import { StyleSheet, Text, View, TouchableOpacity } from 'react-native'
 import MapView, { Marker } from 'react-native-maps'
-import openMap from 'react-native-open-maps';
+import open from 'react-native-open-maps'
 import React from 'react'
 
 const PollingPlaceButton = (passedUserInfo) => {
 
     const { userInfo } = passedUserInfo
     return (
-        <TouchableOpacity style={styles.pollingLocationButton} onPress={() => openMap({ query: userInfo.currentPollingPlace.name })}>
+        <TouchableOpacity style={styles.pollingLocationButton} onPress={() => open({ query: userInfo.currentPollingPlace.name, provider: 'google' })}>
             <View style={styles.pollingPlaceInfo}>
                 <Text style={{ fontSize: 18, fontWeight: '900', paddingBottom: 5 }}>{userInfo.currentPollingPlace.name}</Text>
                 <Text style={{ fontSize: 14, fontWeight: '700', color: 'grey' }}>{userInfo.currentPollingPlace.street}</Text>

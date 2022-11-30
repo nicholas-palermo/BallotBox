@@ -1,21 +1,16 @@
 import { Button, StyleSheet, Text, View, SafeAreaView, ScrollView, StatusBar, Image, TouchableOpacity, ActivityIndicator} from 'react-native'
-import React, { useLayoutEffect } from 'react'
 import useAuth from '../hooks/useAuth'
 import { useNavigation } from '@react-navigation/native';
-import { useEffect } from 'react';
-import { doc, getDoc } from 'firebase/firestore';
-import { db } from '../firebase/firebase-config';
+import React, { useEffect, useState, useLayoutEffect } from 'react';
 import { Entypo } from '@expo/vector-icons';
 import { Linking } from 'react-native';
-import { collection, query, where, getDocs, DocumentReference } from 'firebase/firestore';
-import { useState } from 'react';
-import { useRef } from 'react';
+import { doc, getDoc, collection, query, where, getDocs, DocumentReference } from 'firebase/firestore';
+import { db } from '../firebase/firebase-config';
 
 const DashboardScreen = () => {
 
-  const { user, userInfo, setUserInfo } = useAuth();
+  const { user, userInfo, setUserInfo, upcomingElections, setUpcomingElections } = useAuth();
   const [currentReps, setCurrentReps] = useState(null);
-  const [upcomingElections, setUpcomingElections] = useState([]);
   const [candidatePhotos, setCanididatePhotos] = useState([]);
   const [loading, setLoading] = useState(true)
 
@@ -356,7 +351,7 @@ const styles = StyleSheet.create({
   // Elections
   electionsContainer: {
     paddingTop: 5,
-    height: '72.5%',
+    height: '71%',
     width: '100%'
   },
   electionsView: {
@@ -368,7 +363,7 @@ const styles = StyleSheet.create({
     borderRadius: 15
   },
   election: {
-    height: 114.675,
+    height: 112,
     borderBottomColor: 'lightgrey',
     borderBottomWidth: 1,
     justifyContent: 'center',
@@ -376,7 +371,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row'
   },
   electionCandidateImagesContainer: {
-    height: '80%',
+    height: '86%',
     width: '27%'
   },
   electionInfo: {

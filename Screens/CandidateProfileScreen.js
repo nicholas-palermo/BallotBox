@@ -24,9 +24,7 @@ const CandidateProfileScreen = () => {
         phoneNumber: route.params.phoneNumber,
         email: route.params.email
     })
-    const [isOpen, setIsOpen] = useState(false);
-    const [isDisabled, setIsDisabled] = useState(false);
-    const [swipeToClose, setSwipeToClose] = useState(true);
+    const [expanded, setExpanded] = useState(false)
 
     const args = {
         number: official.phoneNumber, // String value with the number to call
@@ -51,9 +49,9 @@ const CandidateProfileScreen = () => {
             <View style={styles.viewContainer}>
                 <View style={styles.view}>
                     <View style={styles.coverPhotoContainer}>
-                        <Image style={styles.coverPhoto} source={{ uri: official.candidatePhoto }}></Image>
+                        <Image style={expanded ? styles.coverPhotoExpanded : styles.coverPhotoCollapsed} source={{ uri: official.candidatePhoto }}></Image>
                     </View>
-                    <TouchableOpacity style={styles.backButton} onPress={() => navigation.navigate("Dashboard")}>
+                    <TouchableOpacity style={styles.backButton} onPress={() => navigation.goBack()}>
                         <Ionicons name="arrow-back" size={32} color="lightgrey" />
                     </TouchableOpacity>
                     <BottomDrawer
@@ -61,6 +59,8 @@ const CandidateProfileScreen = () => {
                         startUp={false}
                         downDisplay={300}
                         roundedEdges={true}
+                        onExpanded={() => setExpanded(true)}
+                        onCollapsed={() => setExpanded(false)}
                     >
                         <ScrollView contentContainerStyle={{alignItems: 'center'}} style={styles.profileContainer}>
                             <View style={{ width: 50, height: 5, backgroundColor: 'lightgrey', marginTop: 5, borderRadius: 25 }}></View>
@@ -110,9 +110,16 @@ const styles = StyleSheet.create({
     coverPhotoContainer: {
         height: 450,
         width: '100%',
-        zIndex: 0
+        zIndex: 0,
+        backgroundColor: 'black'
     },
-    coverPhoto: {
+    coverPhotoExpanded: {
+        width: null,
+        height: '100%',
+        zIndex: 0,
+        opacity: 0.3
+    },
+    coverPhotoCollapsed: {
         width: null,
         height: '100%',
         zIndex: 0
