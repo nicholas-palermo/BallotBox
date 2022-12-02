@@ -5,6 +5,9 @@ import { useState, useLayoutEffect } from 'react';
 import { Ionicons } from '@expo/vector-icons';
 import call from 'react-native-phone-call';
 import BottomDrawer from 'react-native-bottom-drawer-view'
+import CacheImage from '../Components/CacheImage';
+import ReadMore from 'react-native-read-more-text';
+
 
 const CandidateProfileScreen = () => {
 
@@ -22,15 +25,39 @@ const CandidateProfileScreen = () => {
         subtitle: route.params.subtitle,
         district: route.params.district,
         phoneNumber: route.params.phoneNumber,
-        email: route.params.email
+        email: route.params.email,
+        bio: route.params.bio
     })
     const [expanded, setExpanded] = useState(false)
+    const [bioExpanded, setBioExpanded] = useState(false)
 
     const args = {
         number: official.phoneNumber, // String value with the number to call
         prompt: true, // Optional boolean property. Determines if the user should be prompted prior to the call 
-        skipCanOpen: true // Skip the canOpenURL check
+        skipCanOpen: false // Skip the canOpenURL check
     }
+
+    const _renderTruncatedFooter = (handlePress) => {
+        return (
+          <Text style={{color: (official.party === "Democrat" ? 'rgb(83, 159, 231)' : 'red'), marginTop: 5, textAlign: 'left', fontSize: 16,
+          fontWeight: '400',}} onPress={handlePress}>
+            Read More
+          </Text>
+        );
+      }
+     
+    const _renderRevealedFooter = (handlePress) => {
+        return (
+          <Text style={{color: (official.party === "Democrat" ? 'rgb(83, 159, 231)' : 'red'), marginTop: 5, textAlign: 'left', fontSize: 16,
+          fontWeight: '400',}} onPress={handlePress}>
+            Show Less
+          </Text>
+        );
+      }
+     
+    const _handleTextReady = () => {
+        // ...
+      }
 
 
     useLayoutEffect(() => {
@@ -49,7 +76,7 @@ const CandidateProfileScreen = () => {
             <View style={styles.viewContainer}>
                 <View style={styles.view}>
                     <View style={styles.coverPhotoContainer}>
-                        <Image style={expanded ? styles.coverPhotoExpanded : styles.coverPhotoCollapsed} source={{ uri: official.candidatePhoto }}></Image>
+                        <CacheImage style={expanded ? styles.coverPhotoExpanded : styles.coverPhotoCollapsed} uri={official.candidatePhoto } />
                     </View>
                     <TouchableOpacity style={styles.backButton} onPress={() => navigation.goBack()}>
                         <Ionicons name="arrow-back" size={32} color="lightgrey" />
@@ -62,7 +89,7 @@ const CandidateProfileScreen = () => {
                         onExpanded={() => setExpanded(true)}
                         onCollapsed={() => setExpanded(false)}
                     >
-                        <ScrollView contentContainerStyle={{alignItems: 'center'}} style={styles.profileContainer}>
+                        <ScrollView contentContainerStyle={{alignItems: 'center', paddingBottom: 100}} style={styles.profileContainer}>
                             <View style={{ width: 50, height: 5, backgroundColor: 'lightgrey', marginTop: 5, borderRadius: 25 }}></View>
                             <TouchableOpacity style={{top: 30, height: '100%', width: '100%'}}>
                                 <View style={styles.header}>
@@ -71,15 +98,25 @@ const CandidateProfileScreen = () => {
                                     <Text style={official.party === 'Democrat' ? styles.partyDem : official.party === 'Republican' ? styles.partyRepub : styles.partyInd}>{official.party}</Text>
                                 </View>
                                 <View style={styles.actionButtonContainer}>
-                                    <TouchableOpacity style={official.party === 'Democrat' ? styles.actionButtonDem : official.party === 'Republican' ? styles.actionButtonRepub : styles.actionButtonInd} onPress={() => call(args).catch(console.error)}><Text style={official.party === 'Democrat' ? styles.actionButtonTextDem : official.party === 'Republican' ? styles.actionButtonTextRepub : styles.actionButtonTextInd}>Call</Text></TouchableOpacity>
-                                    <TouchableOpacity style={official.party === 'Democrat' ? styles.actionButtonDem : official.party === 'Republican' ? styles.actionButtonRepub : styles.actionButtonInd}><Text style={official.party === 'Democrat' ? styles.actionButtonTextDem : official.party === 'Republican' ? styles.actionButtonTextRepub : styles.actionButtonTextInd}>Email</Text></TouchableOpacity>
-                                    <TouchableOpacity style={official.party === 'Democrat' ? styles.actionButtonDem : official.party === 'Republican' ? styles.actionButtonRepub : styles.actionButtonInd} onPress={() => Linking.openURL(official.campaignSiteURL)}><Text style={official.party === 'Democrat' ? styles.actionButtonTextDem : official.party === 'Republican' ? styles.actionButtonTextRepub : styles.actionButtonTextInd}>Website</Text></TouchableOpacity>
+                                    <TouchableOpacity style={[official.party === 'Democrat' ? styles.actionButtonDem : official.party === 'Republican' ? styles.actionButtonRepub : styles.actionButtonInd, official?.phoneNumber ? {display: 'flex'} : {display: 'flex'}]} onPress={() => call(args).catch(console.error)}><Text style={official.party === 'Democrat' ? styles.actionButtonTextDem : official.party === 'Republican' ? styles.actionButtonTextRepub : styles.actionButtonTextInd}>Call</Text></TouchableOpacity>
+                                    <TouchableOpacity style={[official.party === 'Democrat' ? styles.actionButtonDem : official.party === 'Republican' ? styles.actionButtonRepub : styles.actionButtonInd, official?.email ? {display: 'flex'} : {display: 'none'}]} onPress={() => {if (official.email !== null) {Linking.openURL(`mailto:${official.email}`)}}}><Text style={official.party === 'Democrat' ? styles.actionButtonTextDem : official.party === 'Republican' ? styles.actionButtonTextRepub : styles.actionButtonTextInd}>Email</Text></TouchableOpacity>
+                                    <TouchableOpacity style={[official.party === 'Democrat' ? styles.actionButtonDem : official.party === 'Republican' ? styles.actionButtonRepub : styles.actionButtonInd, official.campaignSiteURL ? {display: 'flex'} : {display: 'none'}]} onPress={() => Linking.openURL(official.campaignSiteURL)}><Text style={official.party === 'Democrat' ? styles.actionButtonTextDem : official.party === 'Republican' ? styles.actionButtonTextRepub : styles.actionButtonTextInd}>Website</Text></TouchableOpacity>
+                                </View>
+                                <View style={styles.infoContainer}>
+                                    <View style={styles.sectionContainer}>
+                                        <Text style={styles.sectionHeading}>Biography</Text>
+                                        <ReadMore numberOfLines={15} renderTruncatedFooter={_renderTruncatedFooter} renderRevealedFooter={_renderRevealedFooter} onReady={_handleTextReady}>
+                                            <Text style={styles.sectionText}>{official.bio}</Text>
+                                        </ReadMore>
+                                    </View>
                                 </View>
                             </TouchableOpacity>
                         </ScrollView>
                     </BottomDrawer>
                 </View>
             </View>
+
+            {/* style={styles.sectionText} seeMoreStyle={{color: 'blue', fontWeight: '600', marginLeft: 0, width: 40, textDecorationLine: 'underline'}} seeMoreText={"More"} ellipsis={'...'} */}
         </>
     )
 }
@@ -211,5 +248,27 @@ const styles = StyleSheet.create({
     actionButtonTextInd: {
         fontWeight: '700',
         color: 'purple'
+    },
+    infoContainer: {
+        justifyContent: 'center',
+        alignItems: 'center',
+        top: 25
+    }, 
+    sectionContainer: {
+        width: '95%',
+        marginLeft: 35,
+        paddingRight: 35
+    },
+    sectionHeading: {
+        textAlign: 'left',
+        fontSize: 30,
+        fontWeight: '800',
+        marginBottom: 10
+    },
+    sectionText: {
+        fontSize: 16,
+        fontWeight: '300',
+        marginLeft: 35,
+        marginRight: 30
     }
 })  

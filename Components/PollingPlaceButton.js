@@ -21,6 +21,8 @@ const PollingPlaceButton = (passedUserInfo) => {
                     longitudeDelta: 0.015
                 }}
                 scrollEnabled={false}
+                zoomEnabled={false}
+                zoomTapEnabled={false}
                 style={{ width: '37%', height: 100, paddingLeft: 40 }}
             >
                 <Marker coordinate={{ latitude: userInfo.currentPollingPlace.location._lat, longitude: userInfo.currentPollingPlace.location._long }}></Marker>

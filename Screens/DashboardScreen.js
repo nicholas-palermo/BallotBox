@@ -6,6 +6,7 @@ import { Entypo } from '@expo/vector-icons';
 import { Linking } from 'react-native';
 import { doc, getDoc, collection, query, where, getDocs, DocumentReference } from 'firebase/firestore';
 import { db } from '../firebase/firebase-config';
+import CacheImage from '../Components/CacheImage';
 
 const DashboardScreen = () => {
 
@@ -27,7 +28,7 @@ const DashboardScreen = () => {
     if (userInfo === null && user !== null) {
       fetchData(user.uid)
     }
-    if (currentReps) {
+    if(currentReps) {
       setLoading(false)
     }
 
@@ -85,114 +86,118 @@ const DashboardScreen = () => {
 
   return ( 
     <>
+    {userInfo && 
+      <>
         <StatusBar
-          animated={true}
-          backgroundColor="white"
-          barStyle="dark-content"
-        />
-        <View style={loading ? {justifyContent: 'center', alignItems: 'center', width: '100%', height: '100%'} : {display: 'none'}}>
-        <ActivityIndicator id="loadingOverlay" size="large" color="blue"></ActivityIndicator>
-        </View> 
-        <SafeAreaView style={styles.viewShown}>
-          <View style={styles.header}>
-            <View style={styles.menuButtonContainer}>
-              <TouchableOpacity style={styles.menuButton} onPress={() => navigation.navigate("Settings")}>
-                <Entypo name="menu" size={32} color="black" />
-              </TouchableOpacity>
+            animated={true}
+            backgroundColor="white"
+            barStyle="dark-content"
+          />
+          <View style={loading ? {justifyContent: 'center', alignItems: 'center', width: '100%', height: '100%'} : {display: 'none'}}>
+          <ActivityIndicator id="loadingOverlay" size="large" color="blue"></ActivityIndicator>
+          </View> 
+          <SafeAreaView style={styles.viewShown}>
+            <View style={styles.header}>
+              <View style={styles.menuButtonContainer}>
+                <TouchableOpacity style={styles.menuButton} onPress={() => navigation.navigate("Settings")}>
+                  <Entypo name="menu" size={32} color="black" />
+                </TouchableOpacity>
+              </View>
+              <View style={styles.logoContainer}>
+                <Image style={styles.logo} source={require('../assets/logo.png')}></Image>
+              </View>
+              <View style={styles.profileButtonContainer}>
+                <TouchableOpacity style={styles.profileButton} onPress={() => navigation.navigate("Profile")}>
+                  <CacheImage style={styles.profileImage} uri={userInfo?.profileImage}></CacheImage>
+                </TouchableOpacity>
+              </View>
             </View>
-            <View style={styles.logoContainer}>
-              <Image style={styles.logo} source={require('../assets/logo.png')}></Image>
-            </View>
-            <View style={styles.profileButtonContainer}>
-              <TouchableOpacity style={styles.profileButton} onPress={() => navigation.navigate("Profile")}>
-                <Image style={styles.profileImage} source={{ uri: userInfo?.profileImage }}></Image>
-              </TouchableOpacity>
-            </View>
-          </View>
 
-          <View style={styles.mainView}>
-            <View style={styles.welcome}>
-              <Text style={{ fontSize: 40, fontWeight: '700' }}>Hi {userInfo?.preferredName ? userInfo.preferredName : userInfo?.firstName}.</Text>
-              <Text style={{ fontSize: 30, fontWeight: '200' }}>Welcome to Civic!</Text>
-            </View>
-            <View style={styles.home}>
-              {userInfo?.registered ?
-                <>
-                  <Text style={styles.votingStatus}>You are registered to vote in <Text style={styles.votingStatusSpan}>{userInfo?.city}, {userInfo?.state}</Text>.</Text>
+            <View style={styles.mainView}>
+              <View style={styles.welcome}>
+                <Text style={{ fontSize: 40, fontWeight: '700' }}>Hi {userInfo?.preferredName ? userInfo.preferredName : userInfo?.firstName}.</Text>
+                <Text style={{ fontSize: 30, fontWeight: '200' }}>Welcome to Civic!</Text>
+              </View>
+              <View style={styles.home}>
+                {userInfo?.registered ?
+                  <>
+                    <Text style={styles.votingStatus}>You are registered to vote in <Text style={styles.votingStatusSpan}>{userInfo?.city}, {userInfo?.state}</Text>.</Text>
 
-                  <View style={styles.repsContainer}>
-                    <Text style={styles.homeSubheading}>Your current <Text style={styles.homeSubheadingSpan}>elected officials</Text>:</Text>
+                    <View style={styles.repsContainer}>
+                      <Text style={styles.homeSubheading}>Your current <Text style={styles.homeSubheadingSpan}>elected officials</Text>:</Text>
 
-                    <ScrollView style={styles.repView} horizontal={true} showsHorizontalScrollIndicator="false">
-                      {currentReps ?
-                        currentReps.map(rep =>
-                          <View key={rep.firstName + ' ' + rep.lastName} style={styles.repContainer}>
-                            <TouchableOpacity style={rep.party === "Republican" ? styles.repButtonRepub : rep.party === "Democrat" ? styles.repButtonDem : styles.repButtonInd} onPress={() => navigation.navigate("CandidateProfile",
-                              { firstName: rep.firstName, lastName: rep.lastName, party: rep.party, candidatePhoto: rep.candidatePhoto, inOffice: rep.inOffice, campaignSiteURL: rep.campaignSiteURL, title: rep.title, subtitle: rep.subtitle, district: rep.district, phoneNumber: rep.phoneNumber, email: rep.email })}>
-                              <Image style={styles.repImg} source={{ uri: rep.candidatePhoto }}></Image>
+                      <ScrollView style={styles.repView} horizontal={true} showsHorizontalScrollIndicator="false">
+                        {currentReps ?
+                          currentReps.map(rep =>
+                            <View key={rep.firstName + ' ' + rep.lastName} style={styles.repContainer}>
+                              <TouchableOpacity style={rep.party === "Republican" ? styles.repButtonRepub : rep.party === "Democrat" ? styles.repButtonDem : styles.repButtonInd} onPress={() => navigation.navigate("CandidateProfile",
+                                { firstName: rep.firstName, lastName: rep.lastName, party: rep.party, candidatePhoto: rep.candidatePhoto, inOffice: rep.inOffice, campaignSiteURL: rep.campaignSiteURL, title: rep.title, subtitle: rep.subtitle, district: rep.district, phoneNumber: rep.phoneNumber, email: rep.email, bio: rep.bio })}>
+                                <CacheImage style={styles.repImg} uri={rep.candidatePhoto}></CacheImage>
+                              </TouchableOpacity>
+                              <Text style={styles.repTitle}>{rep.title === "State Attorney General" ? "State Atty. Gen." : rep.title}</Text>
+                              <Text style={styles.repName}>{rep.firstName} {rep.lastName}</Text>
+                            </View>)
+                          :
+                          <Text>Cannot retrieve current representitives at this time.</Text>}
+                      </ScrollView>
+
+                    </View>
+
+                    <View style={styles.electionsContainer}>
+                      <Text style={styles.homeSubheading}>Your <Text style={styles.homeSubheadingSpan}>upcoming elections</Text>:</Text>
+                      <ScrollView style={styles.electionsView} showsVerticalScrollIndicator="false">
+                        {upcomingElections ?
+                          upcomingElections.map(election =>
+                            <TouchableOpacity  style={styles.election} key={`${election.type} Election for ${election.office} of ${election.district}`} onPress={() => navigation.navigate("ElectionInfo", {
+                              candidates: election.candidates,
+                              date: election.date,
+                              district: election.district,
+                              office: election.office,
+                              earlyVoting: election.earlyVoting,
+                              incumbent: election.incumbent,
+                              level: election.level,
+                              type: election.type,
+                              votingPeriod: election.votingPeriod
+                            })}>
+                              <View style={styles.electionCandidateImagesContainer}>
+                                <View style={styles.demElectionCandidateImgContainer}>
+                                  <CacheImage style={styles.electionCandidateImg} uri={election.candidates.democrat.candidatePhoto}></CacheImage>
+                                </View>
+                                <View style={styles.repubElectionCandidateImgContainer}>
+                                  <CacheImage style={styles.electionCandidateImg} uri={election.candidates.republican.candidatePhoto}></CacheImage>
+                                </View>
+                              </View>
+                              <View style={styles.electionInfo}>
+                                <Text style={styles.electionTitle}>{election.office} of {election.district},</Text>
+                                <Text style={styles.electionTitle}>{election.type} Election</Text>
+                                <Text>
+                                  <Text style={styles.demCandidateName}>{election.candidates.democrat.firstName} {election.candidates.democrat.lastName} </Text>
+                                  vs.
+                                  <Text style={styles.repubCandidateName}> {election.candidates.republican.firstName} {election.candidates.republican.lastName}</Text>
+                                </Text>
+                              </View>
                             </TouchableOpacity>
-                            <Text style={styles.repTitle}>{rep.title === "State Attorney General" ? "State Atty. Gen." : rep.title}</Text>
-                            <Text style={styles.repName}>{rep.firstName} {rep.lastName}</Text>
-                          </View>)
-                        :
-                        <Text>Cannot retrieve current representitives at this time.</Text>}
-                    </ScrollView>
+                          )
+                          :
+                          <Text>Cannot retrieve upcoming elections at this time.</Text>}
+                      </ScrollView>
+                    </View>
+                  </>
+                  :
+                  <>
+                    <Text style={styles.homeSubheading}>It looks like you aren't registered to vote yet!</Text>
+                    <Text style={styles.homeSubheading}>You can learn how to register by clicking below: </Text>
+                    <Button title='Register to Vote!' onPress={() => Linking.openURL('https://vote.gov/')} />
+                  </>
+                }
 
-                  </View>
-
-                  <View style={styles.electionsContainer}>
-                    <Text style={styles.homeSubheading}>Your <Text style={styles.homeSubheadingSpan}>upcoming elections</Text>:</Text>
-                    <ScrollView style={styles.electionsView} showsVerticalScrollIndicator="false">
-                      {upcomingElections ?
-                        upcomingElections.map(election =>
-                          <TouchableOpacity  style={styles.election} key={`${election.type} Election for ${election.office} of ${election.district}`} onPress={() => navigation.navigate("ElectionInfo", {
-                            candidates: election.candidates,
-                            date: election.date,
-                            district: election.district,
-                            office: election.office,
-                            earlyVoting: election.earlyVoting,
-                            incumbent: election.incumbent,
-                            level: election.level,
-                            type: election.type,
-                            votingPeriod: election.votingPeriod
-                          })}>
-                            <View style={styles.electionCandidateImagesContainer}>
-                              <View style={styles.demElectionCandidateImgContainer}>
-                                <Image style={styles.electionCandidateImg} source={{ uri: election.candidates.democrat.candidatePhoto }}></Image>
-                              </View>
-                              <View style={styles.repubElectionCandidateImgContainer}>
-                                <Image style={styles.electionCandidateImg} source={{ uri: election.candidates.republican.candidatePhoto }}></Image>
-                              </View>
-                            </View>
-                            <View style={styles.electionInfo}>
-                              <Text style={styles.electionTitle}>{election.office} of {election.district},</Text>
-                              <Text style={styles.electionTitle}>{election.type} Election</Text>
-                              <Text>
-                                <Text style={styles.demCandidateName}>{election.candidates.democrat.firstName} {election.candidates.democrat.lastName} </Text>
-                                vs.
-                                <Text style={styles.repubCandidateName}> {election.candidates.republican.firstName} {election.candidates.republican.lastName}</Text>
-                              </Text>
-                            </View>
-                          </TouchableOpacity>
-                        )
-                        :
-                        <Text>Cannot retrieve upcoming elections at this time.</Text>}
-                    </ScrollView>
-                  </View>
-                </>
-                :
-                <>
-                  <Text style={styles.homeSubheading}>It looks like you aren't registered to vote yet!</Text>
-                  <Text style={styles.homeSubheading}>You can learn how to register by clicking below: </Text>
-                  <Button title='Register to Vote!' onPress={() => Linking.openURL('https://vote.gov/')} />
-                </>
-              }
-
+              </View>
             </View>
-          </View>
 
-        </SafeAreaView>
+          </SafeAreaView>
       </>
+    }
+    </>
   )
 }
 

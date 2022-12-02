@@ -10,6 +10,7 @@ import { Ionicons } from '@expo/vector-icons';
 import { MaterialIcons } from '@expo/vector-icons';
 import PollingPlaceButton from '../Components/PollingPlaceButton';
 import BottomDrawer from 'react-native-bottom-drawer-view';
+import CacheImage from '../Components/CacheImage';
 
 
 const ProfileScreen = () => {
@@ -108,7 +109,7 @@ const ProfileScreen = () => {
                         [styles.profileImgContainer, { borderColor: 'red' }] :
                         [styles.profileImgContainer, { borderColor: 'purple' }]
             } onPress={() => pickImageAsync()}>
-                <Image style={styles.profileImg} source={{ uri: profilePicture }} />
+                <CacheImage style={styles.profileImg} uri={profilePicture} />
             </TouchableHighlight>
 
             <Text style={styles.name}>{userInfo.firstName} {userInfo.lastName}</Text>

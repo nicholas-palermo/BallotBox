@@ -8,6 +8,7 @@ import BottomDrawer from 'react-native-bottom-drawer-view';
 import PollingPlaceButton from '../Components/PollingPlaceButton';
 import useAuth from '../hooks/useAuth';
 import { BlurView } from 'expo-blur';
+import CacheImage from '../Components/CacheImage';
 
 const ElectionInfoScreen = () => {
 
@@ -44,10 +45,10 @@ const ElectionInfoScreen = () => {
                 <View style={styles.view}>
                     <View style={styles.coverPhotoContainer}>
                         <View style={styles.coverPhoto1Container}>
-                            <Image style={expanded ? styles.coverPhoto1Expanded : styles.coverPhoto1Collapsed} source={{ uri: election.candidates.democrat.candidatePhoto }}></Image>
+                            <CacheImage style={expanded ? styles.coverPhoto1Expanded : styles.coverPhoto1Collapsed} uri={election.candidates.democrat.candidatePhoto}/>
                         </View>
                         <View style={styles.coverPhoto2Container}>
-                            <Image style={expanded ? styles.coverPhoto2Expanded : styles.coverPhoto2Collapsed} source={{ uri: election.candidates.republican.candidatePhoto }}></Image>
+                            <CacheImage style={expanded ? styles.coverPhoto2Expanded : styles.coverPhoto2Collapsed} uri={election.candidates.republican.candidatePhoto}/>
                         </View>
                     </View>
                     <TouchableOpacity style={styles.backButton} onPress={() => navigation.goBack()}>
@@ -86,9 +87,10 @@ const ElectionInfoScreen = () => {
                                                 subtitle: election.candidates.democrat.subtitle,
                                                 district: election.candidates.democrat.district,
                                                 phoneNumber: election.candidates.democrat.phoneNumber,
-                                                email: election.candidates.democrat.email
+                                                email: election.candidates.democrat.email,
+                                                bio: election.candidates.democrat.bio
                                             })}>
-                                            <Image style={styles.candidateImg} source={{ uri: election.candidates.democrat.candidatePhoto }}></Image>
+                                            <CacheImage style={styles.candidateImg} uri={election.candidates.democrat.candidatePhoto}/>
                                         </TouchableOpacity>
                                         <Text style={styles.candidateName}>{election.candidates.democrat.firstName} {election.candidates.democrat.lastName}</Text>
                                         <Text style={styles.candidatePartyDem}>{election.candidates.democrat.party}</Text>
@@ -106,9 +108,10 @@ const ElectionInfoScreen = () => {
                                                 subtitle: election.candidates.republican.subtitle,
                                                 district: election.candidates.republican.district,
                                                 phoneNumber: election.candidates.republican.phoneNumber,
-                                                email: election.candidates.republican.email
+                                                email: election.candidates.republican.email,
+                                                bio: election.candidates.republican.bio
                                             })}>
-                                            <Image style={styles.candidateImg} source={{ uri: election.candidates.republican.candidatePhoto }}></Image>
+                                            <CacheImage style={styles.candidateImg} uri={election.candidates.republican.candidatePhoto }/>
                                         </TouchableOpacity>
                                         <Text style={styles.candidateName}>{election.candidates.republican.firstName} {election.candidates.republican.lastName}</Text>
                                         <Text style={styles.candidatePartyRepub}>{election.candidates.republican.party}</Text>

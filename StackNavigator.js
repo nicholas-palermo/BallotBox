@@ -29,7 +29,7 @@ const HomeStackNavigator = () => {
             <Stack.Screen name="Profile" component={ProfileScreen} />
             <Stack.Screen name="CandidateProfile" component={CandidateProfileScreen} />
             <Stack.Screen name="ElectionInfo" component={ElectionInfoScreen} />
-            <Stack.Screen name="CivicAssistant" component={CivicAssistantScreen} />
+            <Stack.Screen name="CivicAssistant" component={CivicAssistantScreen} options={{headerShown: false}}/>
             <Stack.Screen name="Settings" component={SettingsScreen} options={{ gestureDirection: 'horizontal-inverted' }} />
         </Home.Navigator>
     )
@@ -46,6 +46,19 @@ const MyBallotStackNavigator = () => {
         </MyBallot.Navigator>
     )
 }
+
+//Civic Assistant Tab
+const CivicAssistant = createStackNavigator();
+const CivicAssistantStackNavigator = () => {
+    return (
+        <CivicAssistant.Navigator>
+            <CivicAssistant.Screen name="CivicAssist" component={CivicAssistantScreen} options={{ headerShown: false }} />
+            <CivicAssistant.Screen name="CandidateProfile" component={CandidateProfileScreen} />
+        </CivicAssistant.Navigator>
+    )
+}
+
+
 
 //Navigator for Tab Nav
 const Tab = createBottomTabNavigator();
@@ -82,7 +95,7 @@ const TabNaviagtor = () => {
 
 
             }} />
-            <Tab.Screen name="CivicAssistant" component={CivicAssistantScreen} options={{
+            <Tab.Screen name="CivicAssistant" component={CivicAssistantStackNavigator} options={{
                 headerShown: false,
                 tabBarIcon: ({color}) => {
                     return (

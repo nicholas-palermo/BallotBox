@@ -1,61 +1,44 @@
-import { StyleSheet, Text, View, SafeAreaView, Image, Dimensions } from 'react-native'
+import { StyleSheet, Text, View, SafeAreaView, Image, Dimensions, ActivityIndicator } from 'react-native'
 import useAuth from '../hooks/useAuth'
 import React, { useState, useEffect } from 'react'
-import { doc, getDoc, collection, query, where, getDocs, DocumentReference } from 'firebase/firestore';
+import { doc, getDoc, collection, query, where, getDocs, DocumentReference, connectFirestoreEmulator } from 'firebase/firestore';
 import { db } from '../firebase/firebase-config';
 import { TouchableOpacity } from 'react-native-gesture-handler';
 import { Octicons } from '@expo/vector-icons';
 import { useNavigation } from '@react-navigation/native';
+import CacheImage from '../Components/CacheImage';
 
 const MyBallotScreen = () => {
 
-  const { userInfo } = useAuth();
+  const { userInfo, upcomingElections } = useAuth();
   const navigation = useNavigation();
 
-  const [upcomingElections, setUpcomingElections] = useState(null);
-
+  const [selectedCandidates, setSelectedCandidates] = useState(null)
 
   useEffect(() => {
-    if (!upcomingElections) {
-      console.log("Fetching Elections...")
-      fetchUpcomingElections()
+    if (selectedCandidates === null && upcomingElections !== null) {
+      const electionIDObject = {}
+
+      upcomingElections.forEach(election => {
+        electionIDObject[election.electionID] = null
+      });
+
+      console.log(electionIDObject)
+      setSelectedCandidates(electionIDObject)
     }
-  }, [upcomingElections])
-
-  const fetchUpcomingElections = async () => {
-    try {
-      setUpcomingElections([]);
-
-      //Retrieve user's current upcoming elections
-      const electionQ = query(collection(db, "elections"), where("date", "==", "11/08/2022"))
-      const electionQuerySnapshot = await getDocs(electionQ);
-      electionQuerySnapshot.forEach(async (item) => {
-        const election = item.data()
-
-        //get objects sto'rgb(255,75,75)' at reference
-        const demCandidateSnapshot = await getDoc(election.candidates.democrat)
-        const repubCandidateSnapshot = await getDoc(election.candidates.republican)
-        const incumbentSnapshot = await getDoc(election.incumbent)
-
-        //stores objects sto'rgb(255,75,75)' at reference in local object
-        election.candidates.democrat = demCandidateSnapshot.data();
-        election.candidates.republican = repubCandidateSnapshot.data();
-        election.incumbent = incumbentSnapshot.data()
-
-        //adds election to upcoming elections array
-        if (election) {
-          setUpcomingElections(current => [...current, election])
-        }
-      })
-    } catch (error) {
-      console.log(error.message)
+  }, [])
+  
+  const renderSelectedButtons = (party, electionID) => {
+    if (electionID === selectedElection?.electionID) {
+      return (
+        <Octicons name="check-circle-fill" size={22} color="green" />
+      )
+    } else {
+      return (
+        <View style={{height: 22, width: 22, borderRadius: 11, borderWidth: 2, borderColor: 'black'}}></View>
+      )
     }
   }
-
-  const selectCandidate = () => {
-
-  }
-
 
   return (
     <SafeAreaView style={styles.ScreenContainer}>
@@ -85,7 +68,7 @@ const MyBallotScreen = () => {
             <View style={styles.candidateChoicesContainer}>
               <View style={styles.candidateChoice}>
                 <View style={styles.candidateSelect}>
-                  <TouchableOpacity style={styles.selectButton} onPress={()=>{selectCandidate}}>
+                  <TouchableOpacity style={styles.selectButton} onPress={()=>{console.log('Do Something')}}>
                     <Octicons name="check-circle-fill" size={30} color="green" />
                   </TouchableOpacity>
                 </View>
@@ -104,7 +87,7 @@ const MyBallotScreen = () => {
                       phoneNumber: election.candidates.democrat.phoneNumber,
                       email: election.candidates.democrat.email
                   })}>
-                    <Image style={styles.candidatePhoto} source={{ uri: election.candidates.democrat.candidatePhoto }}></Image>
+                    <CacheImage style={styles.candidatePhoto} uri={election.candidates.democrat.candidatePhoto} />
                   </TouchableOpacity>
                   <Text style={styles.CandidateName}>{election.candidates.democrat.firstName} {election.candidates.democrat.lastName}</Text>
                   <Text style={[styles.CandidateParty, { color: 'rgb(83, 159, 231)' }]}>{election.candidates.democrat.party}</Text>
@@ -112,7 +95,7 @@ const MyBallotScreen = () => {
               </View>
               <View style={styles.candidateChoice}>
               <View style={styles.candidateSelect}>
-                  <TouchableOpacity style={[styles.selectButton, {width: 30, aspectRatio: 1, borderColor: 'black', borderRadius: 15, borderWidth: 2}]} onPress={()=>{selectCandidate}}>
+                  <TouchableOpacity style={[styles.selectButton, {width: 30, aspectRatio: 1, borderColor: 'black', borderRadius: 15, borderWidth: 2}]} onPress={()=>{console.log("Do Something")}}>
 
                   </TouchableOpacity>
                 </View>
@@ -131,7 +114,7 @@ const MyBallotScreen = () => {
                       phoneNumber: election.candidates.republican.phoneNumber,
                       email: election.candidates.republican.email
                   })}>
-                    <Image style={styles.candidatePhoto} source={{ uri: election.candidates.republican.candidatePhoto }}></Image>
+                    <CacheImage style={styles.candidatePhoto} uri={election.candidates.republican.candidatePhoto }/>
                   </TouchableOpacity>
                   <Text style={styles.CandidateName}>{election.candidates.republican.firstName} {election.candidates.republican.lastName}</Text>
                   <Text style={[styles.CandidateParty, { color: 'rgb(255,75,75)' }]}>{election.candidates.republican.party}</Text>
